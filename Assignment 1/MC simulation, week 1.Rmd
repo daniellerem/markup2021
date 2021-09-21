@@ -1,0 +1,89 @@
+---
+title: "MC simulation (week 1)"
+author: "Daniëlle Remmerswaal"
+date: "20-9-2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(plotrix)
+library(dplyr)
+install.packages("sjlabelled")
+library(sjlabelled)
+```
+
+8 Monte Carlo simulation exercise
+Perform a small simulation that does the following:
+a) Sample 100 samples from a standard normal distribution.
+```{r}
+set.seed(123)
+samples100 <- rnorm(n=100)
+```
+
+b)For each of these samples, calculate the following statistics for the mean:
+```{r}
+M <- mean(samples100)
+```
+
+* absolute bias (we expect to have a mean of 0)
+```{r}
+bias <- 0-M
+```
+
+* standard error
+```{r}
+sd(samples100)
+st.er <- function(x) sd(x)/sqrt(length(x))
+st.er(samples100)
+```
+
+* lower bound of the 95% confidence interval
+* upper bound of the 95% confidence interval
+needed: z-value 1.96
+```{r}
+
+FunConfInt <- function(x){
+interv <- function(x) 1.96*sd(x)/sqrt(length(x))
+lower <- mean(x)-interv(x)
+upper <- mean(x)+interv(x) 
+Confid <- cbind(lower, upper)
+return(Confid)
+}
+storedsamples <- array(NA, dim=c(100,10000))
+for (i in 1:100){  storedsamples[i,] <- rnorm(n=10000 ,mean = 0,sd=1) } #per row a replicated dataset of 1000 values from the standard normal distribution
+
+SamplesInformation <- array(NA, dim=c(100,7))#empty matrix with space for in each row information for one simulated dataset 
+colnames(SamplesInformation) <- c("mean","bias","sd", "st.error","lower.bound", "upper.bound","Capture")#give names to column vector 
+for(r in 1:100){ #basic information for each of the samples
+SamplesInformation[r,1] <- mean(storedsamples[r,]) #mean
+SamplesInformation[r,2] <- 0-mean(storedsamples[r,]) #bias
+SamplesInformation[r,3] <- sd(storedsamples[r,]) #sd
+SamplesInformation[r,4] <- st.er(storedsamples[r,]) #standard error
+SamplesInformation[r,5] <- FunConfInt(storedsamples[r,])[[1]] #lower bound
+SamplesInformation[r,6] <- FunConfInt(storedsamples[r,])[[2]] #upper bound
+}
+Capture <-  (ifelse((SamplesInformation[,5]>0|SamplesInformation[,6]<0), 0, 1))
+SamplesInformation[,7] <- as_factor(Capture)
+levels(SamplesInformation[,7]) <- c("Not Captured", "Captured")
+
+```
+
+
+c)Create a plot that demonstrates the following:
+“A replication of the procedure that generates a 95% confidence interval that is centered around the sample mean would cover the population value at least 95 out of 100 times” (Neyman, 1934)
+```{r}
+
+ plotCI(x=1:100,y=SamplesInformation[,"mean"],li=SamplesInformation[,"lower.bound"],ui=SamplesInformation[,"upper.bound"],col=SamplesInformation[,7],lwd=1, xlab= "1:numreps",ylab="", main = "95% CI around 100 sample mean of 10.000 points \nfrom standard normal distribution") # plot the confidence intervals. The first row of ci, namely ci[1,], has the left end points. The second row of ci, namely ci[2,], has the right end points.
+abline(h=0,lwd=1, col="blue") # draw a horizontal line at the value of the true mean, zero 
+
+```
+
+
+d) Present a table containing all simulated samples for which the resulting confidence interval does not contain the population value.
+```{r}
+SamplesInformation[(SamplesInformation[,5]>0|SamplesInformation[,6]<0),]
+
+```
+
