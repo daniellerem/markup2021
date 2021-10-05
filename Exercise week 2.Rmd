@@ -1,0 +1,57 @@
+---
+title: "Exercise week2"
+author: "Daniëlle Remmerswaal"
+date: "5-10-2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("poLCA") 
+library(poLCA)
+sessionInfo()
+```
+
+
+# Exercise 
+
+Design a study that:
+
+  a. Does something that requires RNG
+  b. Fixes the RNG seed
+  c. Replicates the results
+  d. Generates an reproducible archive/reprex/markdown
+  e. Will run on my machine without trouble (package installs may be excused)
+  f. Communicates the info of your session
+  
+Polca is a package that can be used for Latent Class Analysis of Varibles with polytomous outcomes (multiple categotical outcomes, so not just binary outcomes). 
+  
+```{r}
+set.seed(124)
+mysim <- poLCA.simdata(N=5000,nclass=3,ndv = 4, missval = TRUE, pctmiss = .15)
+mysim$nresp #randomly generated
+mysim$P #proportions in each class
+```
+created a simulated dataset with 4 categorical questions (with the vector of nresp showing the nr of possible answers each) and one covariant (niv=1). in the simulated data 15% is missing. 
+
+Now we can fit a poLCA model
+```{r}
+mymodel <- cbind(Y1,Y2,Y3,Y4)~1
+class2 <- poLCA(formula=mymodel, data=mysim$dat,nclass=2,na.rm=F,nrep=10)
+class3 <- poLCA(formula=mymodel, data=mysim$dat,nclass=3,na.rm=F,nrep=10)
+```
+```{r}
+class2$P
+class3$P
+```
+```{r replicate}
+set.seed(124)
+mysim <- poLCA.simdata(N=5000,nclass=3,ndv = 4, missval = TRUE, pctmiss = .15)
+mysim$nresp #randomly generated
+mysim$P #proportions in each class
+```
+
+
+
+```
+
