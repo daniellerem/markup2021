@@ -1,8 +1,3 @@
-# add picture of mountain goat
-
-
-#add Assignment 1
-
 ---
 title: "MC simulation (week 1)"
 author: "Daniëlle Remmerswaal"

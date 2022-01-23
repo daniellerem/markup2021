@@ -1,0 +1,119 @@
+---
+title: "Fertility in Swiss provinces in 1888"
+author: "Daniëlle Remmerswaal"
+date: "24-11-2021"
+output:
+  ioslides_presentation:
+    keep_tex: yes
+    logo: SwissFlag.png
+  slidy_presentation: default
+bibliography: References.bib
+nocite: '@*'
+
+---
+
+```{r setup, include=FALSE, eval= T, error=F}
+knitr::opts_chunk$set(echo = TRUE)
+library(magrittr) #pipes 
+library(dplyr) #data manipulation
+library(plotly)
+#devtools:: install_github('hadley/ggplot2') #necessary for moving plots
+library(ggplot2)
+library(GGally) #ggplot's friend
+library(mvtnorm) 
+library(plotmo) #informative plots
+library(DT) 
+library(bibtex)
+```
+
+# Part one
+<center>
+![](FlagMapSwiss.png){width=50%}
+</center>
+
+## Slide With Overview
+- a logo
+- a centered still figure
+- an interactive table
+- a moving figure, interactive figure or movie
+- a 2-column slide
+- an aligned multi-row equation
+- a citation and reference list
+- r-code, displayed but not executed
+- cached r-code (may overlap with the next requirement)
+- r-code, executed, but not displayed (e.g. a figure generation)
+
+## Swiss dataset
+The Swiss dataset is standard included in R, [@Rproject.] The extensive data (all provinces, not only the french-speaking) is managed by Princeton University [-@princetonuniversity].
+
+```{r, include=F}
+dat <- datasets::swiss
+datatable(dat)
+```
+
+## Scatterplot
+
+```{r, eval = T, echo=F, include = T} 
+#*R-code, executed, but not displayed
+dat %>%
+  ggplot(aes(x = Fertility, y = Catholic)) +
+  geom_point() +
+  ggtitle("Scatterplot of fertility rate and percentage catholics") +
+  labs(y="Catholics in the region (in %)", x = "standardised Fertility rate (in %)")
+```
+
+## More options
+```{r, eval = F, echo=F, include = T}
+  sidebarPanel(
+      # select variables (without fertility rate itself)
+      selectInput("variable", label= "Choose a variable to plot against Fertility rate", 
+                  choices = colnames(swiss)[-1])
+    )
+```
+
+
+## 2 column slide
+```{r .columns-2} 
+
+```
+
+
+## Some aligned equations
+$$
+\begin{align}
+    a &= b + c^2,
+    \\a-c^2&=b,
+    \\\mbox{left side} &= \text{right side,}
+    \\\text{left side + something} &\geq \text{right side,}
+\end{align}
+$$
+
+
+
+
+
+# part 2: more slides
+
+## R-Code, Displayed But Not Executed
+
+```{r, eval = F}
+dat %>%
+  filter(Catholic >= 50) %>%
+  summarise("Catholic regions" = n())
+```
+
+## Cached R-code
+
+```{r, cache=TRUE}
+dim(dat)
+ncol(dat)
+```
+
+
+
+
+
+
+
+
+## References
