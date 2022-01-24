@@ -9,6 +9,7 @@ output:
   slidy_presentation: default
 bibliography: References.bib
 nocite: '@*'
+classoption: aspectratio=169
 
 ---
 
@@ -31,24 +32,28 @@ library(bibtex)
 ![](FlagMapSwiss.png){width=50%}
 </center>
 
-## Slide With Overview
-- a logo
-- a centered still figure
-- an interactive table
-- a moving figure, interactive figure or movie
-- a 2-column slide
-- an aligned multi-row equation
-- a citation and reference list
-- r-code, displayed but not executed
-- cached r-code (may overlap with the next requirement)
-- r-code, executed, but not displayed (e.g. a figure generation)
+## Slide With Overview {.columns-2}
+* Part 1
+  + Dataset
+  + Scatterplot
+  + Interactive scatterplot
+  + Some aligned equations
+  
+* Part 2
+  + R-Code for a summary
+  + Cached R code
+  + References
+
+note: ! it is difficult to design a two-column slide. You cannnot easily choose where the page breaks.
 
 ## Swiss dataset
 The Swiss dataset is standard included in R, [@Rproject.] The extensive data (all provinces, not only the french-speaking) is managed by Princeton University [-@princetonuniversity].
 
-```{r, include=F}
+```{r, include=T, echo=F, message = F,  (style="width:80%"), fig.width=0.3}
 dat <- datasets::swiss
-datatable(dat)
+datatable(dat, options = list(pageLength = 5), extensions = 'FixedColumns')
+
+
 ```
 
 ## Scatterplot
@@ -62,27 +67,26 @@ dat %>%
   labs(y="Catholics in the region (in %)", x = "standardised Fertility rate (in %)")
 ```
 
-## More options
-```{r, eval = F, echo=F, include = T}
-  sidebarPanel(
-      # select variables (without fertility rate itself)
-      selectInput("variable", label= "Choose a variable to plot against Fertility rate", 
-                  choices = colnames(swiss)[-1])
-    )
+## Interactive scatterplot
+
+```{r, echo=F,message=F ,warning = F}
+
+fig <- plot_ly(data = dat, x = ~Fertility, y = ~Catholic, type = "scatter")
+
+fig
 ```
 
 
-## 2 column slide
-```{r .columns-2} 
 
-```
+
+
 
 
 ## Some aligned equations
 $$
 \begin{align}
-    a &= b + c^2,
-    \\a-c^2&=b,
+    \frac{1}{2} &= b + c^2,
+    \\ \frac{1}{2}-c^2&=b,
     \\\mbox{left side} &= \text{right side,}
     \\\text{left side + something} &\geq \text{right side,}
 \end{align}
@@ -91,8 +95,11 @@ $$
 
 
 
-
 # part 2: more slides
+
+<center>
+![](FlagMapSwiss.png){width=50%}
+</center>
 
 ## R-Code, Displayed But Not Executed
 
